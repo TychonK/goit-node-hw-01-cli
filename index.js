@@ -32,7 +32,12 @@ const invokeAction = async ({ action, id, name, email, phone }) => {
       break;
 
     case 'remove':
-      // ... id
+      const newContactsSet = await removeContact(id)
+      if (newContactsSet) {
+        console.log(chalk.green('Contact removed successfully'))
+        return
+      }
+      console.log(chalk.yellow('Could not remove contact. Contact with such ID was not found'))
       break;
 
       default:

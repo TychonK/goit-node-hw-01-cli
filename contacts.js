@@ -1,6 +1,7 @@
 const fs = require('fs/promises')
 const path = require('path')
 const crypto = require('crypto')
+const { table } = require('console')
 
 const contactsPath = path.join(__dirname, 'db', 'contacts.json')
 
@@ -20,8 +21,12 @@ const getContactById = async (contactId) => {
   return contact
 }
 
-function removeContact(contactId) {
-  // ...твой код
+const removeContact = async (contactId) => {
+  let allContacts = await readContent()
+  const contactsAfterRemoval = allContacts.filter((contact) => contact.id != contactId)
+  console.table(contactsAfterRemoval)
+  await fs.writeFile(contactsPath, JSON.stringify(contactsAfterRemoval, null, 2))
+  return contactsAfterRemoval
 }
 
 const addContact = async (name, email, phone) => {
