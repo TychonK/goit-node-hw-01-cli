@@ -2,6 +2,7 @@ const fs = require('fs/promises')
 const path = require('path')
 const crypto = require('crypto')
 const { table } = require('console')
+const chalk = require('chalk')
 
 const contactsPath = path.join(__dirname, 'db', 'contacts.json')
 
@@ -17,16 +18,8 @@ const listContacts = async () => {
 
 const getContactById = async (contactId) => {
   const contacts = await readContent()
-  const [contact] = contacts.filter((contact) => contact.id == contactId)
+  const contact = contacts.find((contact) => contact.id == contactId)
   return contact
-}
-
-const removeContact = async (contactId) => {
-  let allContacts = await readContent()
-  const contactsAfterRemoval = allContacts.filter((contact) => contact.id != contactId)
-  console.table(contactsAfterRemoval)
-  await fs.writeFile(contactsPath, JSON.stringify(contactsAfterRemoval, null, 2))
-  return contactsAfterRemoval
 }
 
 const addContact = async (name, email, phone) => {
@@ -35,6 +28,21 @@ const addContact = async (name, email, phone) => {
   contacts.push(newContact)
   await fs.writeFile(contactsPath, JSON.stringify(contacts, null, 2))
   return newContact
+}
+
+const removeContact = async (contactId) => {
+  let allContacts = await readContent()
+
+  const conatctExists = await getContactById(contactId)
+  if (!conatctExists) {
+    console.log(chalk.yellow('No conatct with such ID found'));
+    return
+  }
+
+  const contactsAfterRemoval = allContacts.filter((contact) => contact.id != contactId)
+  console.table(contactsAfterRemoval)
+  await fs.writeFile(contactsPath, JSON.stringify(contactsAfterRemoval, null, 2))
+  return contactsAfterRemoval
 }
 
 module.exports = { listContacts, getContactById, removeContact, addContact }

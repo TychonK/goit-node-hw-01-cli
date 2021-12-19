@@ -26,6 +26,10 @@ const invokeAction = async ({ action, id, name, email, phone }) => {
       break;
 
     case 'add':
+      if (!name || !email || !phone) {
+        console.log(chalk.yellowBright('Invalid contact credentials'))
+        return
+      }
       const newContact = await addContact(name, email, phone)
       console.log(chalk.green('Added new contact'))
       console.table(newContact)
@@ -33,11 +37,10 @@ const invokeAction = async ({ action, id, name, email, phone }) => {
 
     case 'remove':
       const newContactsSet = await removeContact(id)
-      if (newContactsSet) {
-        console.log(chalk.green('Contact removed successfully'))
+      if (!newContactsSet) {
         return
       }
-      console.log(chalk.yellow('Could not remove contact. Contact with such ID was not found'))
+        console.log(chalk.green('Contact removed successfully'))
       break;
 
       default:
